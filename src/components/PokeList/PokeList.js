@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "@reach/router";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Pokedex from '../../helpers/pokedex';
 
 class PokeList extends Component {
@@ -9,10 +10,11 @@ class PokeList extends Component {
       pokemon: [],
       sortTerm: 'default',
       searchTerm: '',
+      searchedPokemon: [],
       filteredPokemon: [],
     }
     this.handleFieldChange = this.handleFieldChange.bind(this);
-    this.filterPokemon = this.filterPokemon.bind(this);
+    this.searchPokemon = this.searchPokemon.bind(this);
   }
   
   componentDidMount () {
@@ -20,11 +22,11 @@ class PokeList extends Component {
       .then(results => {
         return results.json();
       }).then(data => {
-        let pokemon = data.pokemon;
+        const pokemon = data.pokemon;
         this.setState({ pokemon });
       }).catch((error) => {
         console.error('Error:', error);
-        let pokemon = Pokedex.pokemon;
+        const pokemon = Pokedex.pokemon;
         this.setState({ pokemon });
       });
   }
@@ -32,34 +34,52 @@ class PokeList extends Component {
   handleFieldChange (e) {
     this.setState({
       [e.target.name]: e.target.value,
-    }, this.filterPokemon)
+    }, this.searchPokemon)
   }
   
-  filterPokemon () {
+  searchPokemon () {
     const {searchTerm, pokemon} = this.state;
-    let searchedPokemon = pokemon.filter((creature) => {
-      let creatureName = creature.name.toLowerCase();
+    const searchedPokemon = pokemon.filter((creature) => {
+      const creatureName = creature.name.toLowerCase();
       return creatureName.indexOf(searchTerm.toLowerCase()) !== -1
     })
     this.setState({
-      filteredPokemon: searchedPokemon,
+      searchedPokemon,
     })
   }
   
   render() {
-    const {pokemon, searchTerm, filteredPokemon, sortTerm} = this.state;
+    const {pokemon, searchTerm, searchedPokemon, sortTerm} = this.state;
     
     if (!pokemon.length) {
       return null;
     }
     
-    let pokemonList = !searchTerm.length ? pokemon.map((creature) => {
-      let types = creature.type.map((singleType, i) => {
+    const pokemonTypesArray = pokemon.map((creature) => {
+      return [...new Set(creature.type.map(singleType => singleType))];
+    });
+    
+    const pokemonTypes = [...new Set(pokemonTypesArray.flat(1))];
+    const typeOptions = pokemonTypes.map((type) => {
+      return {label: type, value: type};
+    })
+    
+    const pokemonWeaknessArray = pokemon.map((creature) => {
+      return [...new Set(creature.weaknesses.map(weakness => weakness))];
+    });
+    
+    const pokemonWeaknesses = [...new Set(pokemonWeaknessArray.flat(1))];
+    const weaknessOptions = pokemonWeaknesses.map((weakness) => {
+      return {label: weakness, value: weakness};
+    })
+    
+    const pokemonList = !searchTerm.length ? pokemon.map((creature) => {
+      const types = creature.type.map((singleType, i) => {
         return(
           <li key={creature.num + 1000 + i}>{singleType}</li>  
         )
       });
-      let weaknesses = creature.weaknesses.map((weakness, i) => {
+      const weaknesses = creature.weaknesses.map((weakness, i) => {
         return(
           <li key={creature.num + 1000 + i}>{weakness}</li>  
         )
@@ -83,13 +103,13 @@ class PokeList extends Component {
           </section>
         </Link>
         </section>
-      )}) : filteredPokemon.map((creature) => {
-      let types = creature.type.map((singleType, i) => {
+      )}) : searchedPokemon.map((creature) => {
+      const types = creature.type.map((singleType, i) => {
         return(
           <li key={creature.num + 1000 + i}>{singleType}</li>  
         )
       });
-      let weaknesses = creature.weaknesses.map((weakness, i) => {
+      const weaknesses = creature.weaknesses.map((weakness, i) => {
         return(
           <li key={creature.num + 1000 + i}>{weakness}</li>  
         )
@@ -115,7 +135,7 @@ class PokeList extends Component {
     })
     
     if (searchTerm.length) {
-      console.log(filteredPokemon)
+      console.log(searchedPokemon)
     }
     
     return (
@@ -129,6 +149,16 @@ class PokeList extends Component {
             value={searchTerm}
             onChange={this.handleFieldChange}
           />
+        </section>
+        <section className="filter-container">
+          <section className="type-filter-container">
+            <p>Pokemon Types: </p>
+            <ReactMultiSelectCheckboxes options={typeOptions} placeholderButtonLabel="Select Pokemon Type" />
+          </section>
+          <section className="weakness-filter-container">
+            <p>Pokemon Weaknesses: </p>
+            <ReactMultiSelectCheckboxes options={weaknessOptions} placeholderButtonLabel="Select Pokemon Weakness" />
+          </section>
         </section>
         <section className="pokemon-list-container">
           {pokemonList}

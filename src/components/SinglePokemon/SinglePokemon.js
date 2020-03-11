@@ -34,6 +34,12 @@ function SinglePokemon(props) {
             <h5>Weaknesses:</h5>
             <ul>{weaknesses}</ul>
           </section>
+          <section className="previous evolution-container">
+            
+          </section>
+          <section className="next evolution-container">
+            
+          </section>
         </section>
       </section>
       <Link to="/">
