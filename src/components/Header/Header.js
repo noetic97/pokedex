@@ -1,11 +1,10 @@
 import React from 'react';
+import Banner from '../../images/banner_pokemon.jpg';
 
 function Header() {
   return (
-    <header className="Header">
-    <div>
-      <p>I'm a header</p>
-    </div>
+    <header className="header">
+      <img src={Banner} alt="pokemen header banner" className="header-banner" />
     </header>
   );
 }

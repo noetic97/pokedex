@@ -2,10 +2,17 @@
 @import "../components/App/App";
 @import "../components/Footer/Footer";
 @import "../components/Header/Header";
-@import "../components/Home/Home";
+@import "../components/PokeList/PokeList";
+@import "../components/Filter/Filter";
 
 // Third-party
 @import "./vendor/normalize";
 
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+
+
+#root {
+  min-height: 100vh;
+  position: relative;
+}

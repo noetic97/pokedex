@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Router, Link } from "@reach/router";
-import Home from "../Home/Home";
+// import PokeList from "../PokeList/PokeList";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
+const PokeList = lazy(() => import("../PokeList/PokeList"));
 
 function App() {
   return (
-    <div className="App">
+    <div className="app">
     <Header />
-    <Router>
-      <Home path="/" />
-    </Router>
+    <Suspense fallback={<h1>Still Loading…</h1>}>
+      <Router>
+          <PokeList path="/" />
+      </Router>
+    </Suspense>
     <Footer />
     </div>
   );
