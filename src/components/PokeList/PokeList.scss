@@ -4,6 +4,7 @@
     justify-content: center;
     
     .pokemon-card {
+      position: relative;
       max-width: 25vw;
       min-width: 160px;
       flex: 1 0 15%;
@@ -68,6 +69,27 @@
             text-align: end;
           }
         }
+      }
+      
+      .weakness-list {
+        margin-bottom: 4rem;
+      }
+    }
+    
+    .view-details-button {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);      
+      padding: .7rem;
+      border-radius: 50%;
+      border: 3px solid black;
+      background-color: rgb(163, 14, 7);
+      color: #f4f4f4;
+      box-shadow: 8px 14px 38px rgba(39,44,49,.06), 1px 3px 8px rgba(39,44,49,.03);
+      
+      &:hover {
+        cursor: pointer;
       }
     }
   }

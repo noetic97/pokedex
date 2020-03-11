@@ -8,13 +8,18 @@ class PokeList extends Component {
     super(props)
     this.state = {
       pokemon: [],
-      sortTerm: 'default',
+      typeFilterTerms: [],
+      weaknessFilterTerms: [],
       searchTerm: '',
       searchedPokemon: [],
       filteredPokemon: [],
     }
     this.handleFieldChange = this.handleFieldChange.bind(this);
     this.searchPokemon = this.searchPokemon.bind(this);
+    this.handleTypeOptionSelect = this.handleTypeOptionSelect.bind(this);
+    this.handleWeaknessOptionSelect = this.handleWeaknessOptionSelect.bind(this);
+    this.filterType = this.filterType.bind(this);
+    this.filterWeakness = this.filterWeakness.bind(this);
   }
   
   componentDidMount () {
@@ -37,6 +42,15 @@ class PokeList extends Component {
     }, this.searchPokemon)
   }
   
+  handleTypeOptionSelect (e) {
+    const typeFilterTerms = [...new Set(e.map(typeObject => typeObject.value))];
+    this.setState({ typeFilterTerms }, this.filterType);
+  }
+  handleWeaknessOptionSelect (e) {
+    const weaknessFilterTerms = [...new Set(e.map(weaknessObject => weaknessObject.value))];
+    this.setState({ weaknessFilterTerms }, this.filterWeakness);
+  }
+  
   searchPokemon () {
     const {searchTerm, pokemon} = this.state;
     const searchedPokemon = pokemon.filter((creature) => {
@@ -48,8 +62,24 @@ class PokeList extends Component {
     })
   }
   
+  filterType () {
+    const { pokemon, typeFilterTerms } = this.state;
+    let filteredPokemon = pokemon.filter((creature) => creature.type.every( type => typeFilterTerms.includes(type)))
+      .map((creature) => creature);
+
+    this.setState({ filteredPokemon });
+  }
+
+  filterWeakness () {
+    const { pokemon, weaknessFilterTerms } = this.state;
+    let filteredPokemon = pokemon.filter((creature) => creature.weaknesses.every( weaknesses => weaknessFilterTerms.includes(weaknesses)))
+      .map((creature) => creature);
+
+    this.setState({ filteredPokemon });
+  }
+  
   render() {
-    const {pokemon, searchTerm, searchedPokemon, sortTerm} = this.state;
+    const {pokemon, searchTerm, searchedPokemon, filteredPokemon, typeFilterTerms, weaknessFilterTerms} = this.state;
     
     if (!pokemon.length) {
       return null;
@@ -72,7 +102,7 @@ class PokeList extends Component {
     const weaknessOptions = pokemonWeaknesses.map((weakness) => {
       return {label: weakness, value: weakness};
     })
-    
+        
     const pokemonList = !searchTerm.length ? pokemon.map((creature) => {
       const types = creature.type.map((singleType, i) => {
         return(
@@ -101,6 +131,7 @@ class PokeList extends Component {
               <ul>{weaknesses}</ul>
             </section>
           </section>
+          <button className="view-details-button">View Details</button>
         </Link>
         </section>
       )}) : searchedPokemon.map((creature) => {
@@ -116,6 +147,7 @@ class PokeList extends Component {
       });
       return(
         <section className="pokemon-card" key={creature.num}>
+          <Link to={`pokemon/${creature.num}`} pokemon={creature} state={{ pokemon: creature}}>
           <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
           <section className="pokemon-card-img-container">
             <img src={creature.img} alt={`${creature.name} in action`}/>
@@ -130,13 +162,46 @@ class PokeList extends Component {
               <ul>{weaknesses}</ul>
             </section>
           </section>
+          <button className="view-details-button">View Details</button>
+        </Link>
         </section>
       )
-    })
+    });
     
-    if (searchTerm.length) {
-      console.log(searchedPokemon)
-    }
+    const filteredPokemonList = typeFilterTerms.length || weaknessFilterTerms.length ? filteredPokemon.map((creature) => {
+      const types = creature.type.map((singleType, i) => {
+        return(
+          <li key={creature.num + 1000 + i}>{singleType}</li>  
+        )
+      });
+      const weaknesses = creature.weaknesses.map((weakness, i) => {
+        return(
+          <li key={creature.num + 1000 + i}>{weakness}</li>  
+        )
+      });
+      return(
+        <section className="pokemon-card" key={creature.num}>
+          <Link to={`pokemon/${creature.num}`} pokemon={creature} state={{ pokemon: creature}}>
+          <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
+          <section className="pokemon-card-img-container">
+            <img src={creature.img} alt={`${creature.name} in action`}/>
+          </section>
+          <section className="poke-type-weak-container">
+            <section className="type-list">
+              <h5>Type:</h5>
+              <ul>{types}</ul>
+            </section>
+            <section className="weakness-list">
+              <h5>Weaknesses:</h5>
+              <ul>{weaknesses}</ul>
+            </section>
+          </section>
+          <button className="view-details-button">View Details</button>
+        </Link>
+        </section>
+      )
+    }) : pokemonList;
+
     
     return (
       <main className="home">
@@ -153,15 +218,15 @@ class PokeList extends Component {
         <section className="filter-container">
           <section className="type-filter-container">
             <p>Pokemon Types: </p>
-            <ReactMultiSelectCheckboxes options={typeOptions} placeholderButtonLabel="Select Pokemon Type" />
+            <ReactMultiSelectCheckboxes options={typeOptions} placeholderButtonLabel="Select Pokemon Type" onChange={this.handleTypeOptionSelect}/>
           </section>
           <section className="weakness-filter-container">
             <p>Pokemon Weaknesses: </p>
-            <ReactMultiSelectCheckboxes options={weaknessOptions} placeholderButtonLabel="Select Pokemon Weakness" />
+            <ReactMultiSelectCheckboxes options={weaknessOptions} placeholderButtonLabel="Select Pokemon Weakness" onChange={this.handleWeaknessOptionSelect}/>
           </section>
         </section>
         <section className="pokemon-list-container">
-          {pokemonList}
+          {filteredPokemonList}
         </section>
       </main>
     );
