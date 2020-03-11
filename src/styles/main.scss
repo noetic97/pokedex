@@ -3,6 +3,7 @@
 @import "../components/Footer/Footer";
 @import "../components/Header/Header";
 @import "../components/PokeList/PokeList";
+@import "../components/SinglePokemon/SinglePokemon";
 @import "../components/Filter/Filter";
 
 // Third-party
@@ -15,4 +16,8 @@
 #root {
   min-height: 100vh;
   position: relative;
+  
+  .home {
+    padding-bottom: 2.5rem;    /* Footer height */
+  }
 }

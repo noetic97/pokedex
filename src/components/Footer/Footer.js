@@ -4,7 +4,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div>
-        <p>I'm a footer</p>
+        <p>Built by <a href="https://www.linkedin.com/in/joe-heitkamp/" target="_blank" rel="noopener noreferrer">Joe Heitkamp</a> - 2020</p>
       </div>
     </footer>
   );
