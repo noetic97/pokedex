@@ -64,7 +64,9 @@ class PokeList extends Component {
   
   filterType () {
     const { pokemon, typeFilterTerms, filteredPokemon } = this.state;
-    console.log(filteredPokemon)
+    if(!typeFilterTerms.length) {
+      this.filterWeakness();
+    }
     let filteredTypePokemon = filteredPokemon.length && typeFilterTerms.length ? filteredPokemon.filter((creature) => creature.type.some( type => typeFilterTerms[typeFilterTerms.length - 1].includes(type)))
       .map((creature) => creature) : pokemon.filter((creature) => creature.type.some( type => typeFilterTerms.includes(type)))
         .map((creature) => creature);
@@ -77,8 +79,11 @@ class PokeList extends Component {
 
   filterWeakness () {
     const { pokemon, weaknessFilterTerms, filteredPokemon } = this.state;
-    let filteredWeakPokemon = filteredPokemon.length && weaknessFilterTerms.length ? filteredPokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms.includes(weaknesses)))
-      .map((creature) => creature) : pokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms[weaknessFilterTerms.length - 1].includes(weaknesses)))
+    if(!weaknessFilterTerms.length) {
+      this.filterType();
+    }
+    let filteredWeakPokemon = filteredPokemon.length && weaknessFilterTerms.length ? filteredPokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms[weaknessFilterTerms.length - 1].includes(weaknesses)))
+      .map((creature) => creature) : pokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms.includes(weaknesses)))
         .map((creature) => creature);
 
     this.setState({ filteredPokemon: filteredWeakPokemon });
@@ -122,7 +127,7 @@ class PokeList extends Component {
       });
       return(
         <section className="pokemon-card" key={creature.num}>
-          <Link to={`pokemon/${creature.num}`} pokemon={creature} state={{ pokemon: creature}}>
+          <Link to={`pokemon/${creature.num}`} state={{ pokemon }}>
           <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
           <section className="pokemon-card-img-container">
             <img src={creature.img} alt={`${creature.name} in action`}/>
@@ -153,7 +158,7 @@ class PokeList extends Component {
       });
       return(
         <section className="pokemon-card" key={creature.num}>
-          <Link to={`pokemon/${creature.num}`} pokemon={creature} state={{ pokemon: creature}}>
+          <Link to={`pokemon/${creature.num}`} state={{ pokemon }}>
           <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
           <section className="pokemon-card-img-container">
             <img src={creature.img} alt={`${creature.name} in action`}/>
@@ -187,7 +192,7 @@ class PokeList extends Component {
       });
       return(
         <section className="pokemon-card" key={creature.num}>
-          <Link to={`pokemon/${creature.num}`} pokemon={creature} state={{ pokemon: creature}}>
+          <Link to={`pokemon/${creature.num}`} state={{ pokemon }}>
           <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
           <section className="pokemon-card-img-container">
             <img src={creature.img} alt={`${creature.name} in action`}/>

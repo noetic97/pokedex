@@ -1,20 +1,40 @@
 import React from 'react';
 import { Link } from "@reach/router";
+import Pokedex from '../../helpers/pokedex';
 
 function SinglePokemon(props) {
-    
-  const creature = props.location.state.pokemon;
+  const pokemon = props.location.state ? props.location.state.pokemon : Pokedex.pokemon;
+  const creature = pokemon.find(obj => obj.num === props.id);
   
-  let types = creature.type.map((singleType, i) => {
+  const types = creature.type.map((singleType, i) => {
     return(
       <li key={creature.num + 1000 + i}>{singleType}</li>  
     )
   });
-  let weaknesses = creature.weaknesses.map((weakness, i) => {
+  const weaknesses = creature.weaknesses.map((weakness, i) => {
     return(
       <li key={creature.num + 1000 + i}>{weakness}</li>  
     )
-  });
+  });  
+  const previousEvolution = creature.prev_evolution ? creature.prev_evolution.map((evolution, i) => {
+    return(
+      <Link to={`/pokemon/${evolution.num}`} key={evolution.num + 1001 + i} state={{ pokemon: pokemon}}>
+        <li>
+          <p>Previous Evolution: {evolution.name}</p>
+        </li>  
+      </Link>
+    )
+  }) : "";
+  const nextEvolution = creature.next_evolution ? creature.next_evolution.map((evolution, i) => {
+    return(
+      <Link to={`/pokemon/${evolution.num}`} key={evolution.num + 1001 + i} state={{ pokemon: pokemon}}>
+        <li>
+          <p>Next Evolution: {evolution.name}</p>
+        </li>  
+      </Link>
+    )
+  }) : "";
+
   return (
     <main className="single-pokemon-container">
       <section className="single-pokemon-card">
@@ -35,10 +55,14 @@ function SinglePokemon(props) {
             <ul>{weaknesses}</ul>
           </section>
           <section className="previous evolution-container">
-            
+            <ul>
+              {previousEvolution}
+            </ul>
           </section>
           <section className="next evolution-container">
-            
+            <ul>
+              {nextEvolution}
+            </ul>
           </section>
         </section>
       </section>
