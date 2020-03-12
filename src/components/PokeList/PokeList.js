@@ -64,7 +64,7 @@ class PokeList extends Component {
   
   filterType () {
     const { pokemon, typeFilterTerms } = this.state;
-    let filteredPokemon = pokemon.filter((creature) => creature.type.every( type => typeFilterTerms.includes(type)))
+    let filteredPokemon = pokemon.filter((creature) => creature.type.some( type => typeFilterTerms.includes(type)))
       .map((creature) => creature);
 
     this.setState({ filteredPokemon });
@@ -72,7 +72,7 @@ class PokeList extends Component {
 
   filterWeakness () {
     const { pokemon, weaknessFilterTerms } = this.state;
-    let filteredPokemon = pokemon.filter((creature) => creature.weaknesses.every( weaknesses => weaknessFilterTerms.includes(weaknesses)))
+    let filteredPokemon = pokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms.includes(weaknesses)))
       .map((creature) => creature);
 
     this.setState({ filteredPokemon });
