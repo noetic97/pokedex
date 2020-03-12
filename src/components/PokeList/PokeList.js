@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from "@reach/router";
+import PokemonCard from '../PokemonCard/PokemonCard';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Pokedex from '../../helpers/pokedex';
 
@@ -126,25 +126,7 @@ class PokeList extends Component {
         )
       });
       return(
-        <section className="pokemon-card" key={creature.num}>
-          <Link to={`pokemon/${creature.num}`} state={{ pokemon }}>
-          <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
-          <section className="pokemon-card-img-container">
-            <img src={creature.img} alt={`${creature.name} in action`}/>
-          </section>
-          <section className="poke-type-weak-container">
-            <section className="type-list">
-              <h5>Type:</h5>
-              <ul>{types}</ul>
-            </section>
-            <section className="weakness-list">
-              <h5>Weaknesses:</h5>
-              <ul>{weaknesses}</ul>
-            </section>
-          </section>
-          <button className="view-details-button">View Details</button>
-        </Link>
-        </section>
+        <PokemonCard state={{ creature, pokemon, weaknesses, types }} />
       )}) : searchedPokemon.map((creature) => {
       const types = creature.type.map((singleType, i) => {
         return(
@@ -157,25 +139,7 @@ class PokeList extends Component {
         )
       });
       return(
-        <section className="pokemon-card" key={creature.num}>
-          <Link to={`pokemon/${creature.num}`} state={{ pokemon }}>
-          <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
-          <section className="pokemon-card-img-container">
-            <img src={creature.img} alt={`${creature.name} in action`}/>
-          </section>
-          <section className="poke-type-weak-container">
-            <section className="type-list">
-              <h5>Type:</h5>
-              <ul>{types}</ul>
-            </section>
-            <section className="weakness-list">
-              <h5>Weaknesses:</h5>
-              <ul>{weaknesses}</ul>
-            </section>
-          </section>
-          <button className="view-details-button">View Details</button>
-        </Link>
-        </section>
+        <PokemonCard state={{ creature, pokemon, weaknesses, types }} />
       )
     });
     
@@ -191,25 +155,7 @@ class PokeList extends Component {
         )
       });
       return(
-        <section className="pokemon-card" key={creature.num}>
-          <Link to={`pokemon/${creature.num}`} state={{ pokemon }}>
-          <h4 className="pokemon-name">{`NO: ${creature.num} - ${creature.name}`}</h4>
-          <section className="pokemon-card-img-container">
-            <img src={creature.img} alt={`${creature.name} in action`}/>
-          </section>
-          <section className="poke-type-weak-container">
-            <section className="type-list">
-              <h5>Type:</h5>
-              <ul>{types}</ul>
-            </section>
-            <section className="weakness-list">
-              <h5>Weaknesses:</h5>
-              <ul>{weaknesses}</ul>
-            </section>
-          </section>
-          <button className="view-details-button">View Details</button>
-        </Link>
-        </section>
+        <PokemonCard state={{ creature, pokemon, weaknesses, types }} />
       )
     }) : pokemonList;
 
