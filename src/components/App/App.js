@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from 'react';
 import { Router } from "@reach/router";
-// import PokeList from "../PokeList/PokeList";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import SinglePokemon from "../SinglePokemon/SinglePokemon";

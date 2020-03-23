@@ -12,7 +12,9 @@ class PokeList extends Component {
       weaknessFilterTerms: [],
       searchTerm: '',
       searchedPokemon: [],
-      filteredPokemon: [],
+      filteredTypePokemon: [],
+      filteredWeaknessPokemon: [],
+      filteredAllPokemon: [],
     }
     this.handleFieldChange = this.handleFieldChange.bind(this);
     this.searchPokemon = this.searchPokemon.bind(this);
@@ -24,13 +26,11 @@ class PokeList extends Component {
   
   componentDidMount () {
     fetch('https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json')
-      .then(results => {
-        return results.json();
-      }).then(data => {
+      .then(results => results.json())
+      .then(data => {
         const pokemon = data.pokemon;
         this.setState({ pokemon });
       }).catch((error) => {
-        console.error('Error:', error);
         const pokemon = Pokedex.pokemon;
         this.setState({ pokemon });
       });
@@ -63,34 +63,55 @@ class PokeList extends Component {
   }
   
   filterType () {
-    const { pokemon, typeFilterTerms, filteredPokemon } = this.state;
-    if(!typeFilterTerms.length) {
-      this.filterWeakness();
-    }
-    let filteredTypePokemon = filteredPokemon.length && typeFilterTerms.length ? filteredPokemon.filter((creature) => creature.type.some( type => typeFilterTerms[typeFilterTerms.length - 1].includes(type)))
-      .map((creature) => creature) : pokemon.filter((creature) => creature.type.some( type => typeFilterTerms.includes(type)))
-        .map((creature) => creature);
-        
-        console.log(typeFilterTerms, "terms")
-        console.log(filteredTypePokemon, "ftype")
-
-    this.setState({ filteredPokemon: filteredTypePokemon });
+    const { pokemon, typeFilterTerms, filteredAllPokemon, filteredWeaknessPokemon } = this.state;
+    const filteredTypePokemon = filteredWeaknessPokemon.length 
+    ? filteredAllPokemon.filter((creature) => {
+      for (const key in typeFilterTerms) {
+        if (creature.type[key] === undefined || !creature.type.includes(typeFilterTerms[key]))
+          return false;
+      }
+      return true;
+    }) 
+    : pokemon.filter((creature) => {
+      for (const key in typeFilterTerms) {
+        if (creature.type[key] === undefined || !creature.type.includes(typeFilterTerms[key]))
+          return false;
+      }
+      return true;
+    });
+    
+    this.setState({
+      filteredTypePokemon,
+      filteredAllPokemon: filteredTypePokemon,
+    });
   }
 
   filterWeakness () {
-    const { pokemon, weaknessFilterTerms, filteredPokemon } = this.state;
-    if(!weaknessFilterTerms.length) {
-      this.filterType();
-    }
-    let filteredWeakPokemon = filteredPokemon.length && weaknessFilterTerms.length ? filteredPokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms[weaknessFilterTerms.length - 1].includes(weaknesses)))
-      .map((creature) => creature) : pokemon.filter((creature) => creature.weaknesses.some( weaknesses => weaknessFilterTerms.includes(weaknesses)))
-        .map((creature) => creature);
-
-    this.setState({ filteredPokemon: filteredWeakPokemon });
+    const { pokemon, weaknessFilterTerms, filteredAllPokemon, filteredTypePokemon } = this.state;
+    const filteredWeaknessPokemon = filteredTypePokemon.length 
+    ? filteredAllPokemon.filter((creature) => {
+      for (const key in weaknessFilterTerms) {
+        if (creature.weaknesses[key] === undefined || !creature.weaknesses.includes(weaknessFilterTerms[key]))
+          return false;
+      }
+      return true;
+    })
+    : pokemon.filter((creature) => {
+      for (const key in weaknessFilterTerms) {
+        if (creature.weaknesses[key] === undefined || !creature.weaknesses.includes(weaknessFilterTerms[key]))
+          return false;
+      }
+      return true;
+    });
+    
+    this.setState({
+      filteredWeaknessPokemon,
+      filteredAllPokemon: filteredWeaknessPokemon,
+    });
   }
   
   render() {
-    const {pokemon, searchTerm, searchedPokemon, filteredPokemon, typeFilterTerms, weaknessFilterTerms} = this.state;
+    const {pokemon, searchTerm, searchedPokemon, filteredAllPokemon, typeFilterTerms, weaknessFilterTerms} = this.state;
     
     if (!pokemon.length) {
       return null;
@@ -126,7 +147,7 @@ class PokeList extends Component {
         )
       });
       return(
-        <PokemonCard state={{ creature, pokemon, weaknesses, types }} />
+        <PokemonCard state={{ creature, pokemon, weaknesses, types }} key={creature.num + 1000} />
       )}) : searchedPokemon.map((creature) => {
       const types = creature.type.map((singleType, i) => {
         return(
@@ -139,11 +160,11 @@ class PokeList extends Component {
         )
       });
       return(
-        <PokemonCard state={{ creature, pokemon, weaknesses, types }} />
+        <PokemonCard state={{ creature, pokemon, weaknesses, types }} key={creature.num + 1000} />
       )
     });
     
-    const filteredPokemonList = typeFilterTerms.length || weaknessFilterTerms.length ? filteredPokemon.map((creature) => {
+    const filteredAllPokemonList = typeFilterTerms.length || weaknessFilterTerms.length ? filteredAllPokemon.map((creature) => {
       const types = creature.type.map((singleType, i) => {
         return(
           <li key={creature.num + 1000 + i}>{singleType}</li>  
@@ -155,7 +176,7 @@ class PokeList extends Component {
         )
       });
       return(
-        <PokemonCard state={{ creature, pokemon, weaknesses, types }} />
+        <PokemonCard state={{ creature, pokemon, weaknesses, types }} key={creature.num + 1000} />
       )
     }) : pokemonList;
 
@@ -183,7 +204,7 @@ class PokeList extends Component {
           </section>
         </section>
         <section className="pokemon-list-container">
-          {filteredPokemonList}
+          {filteredAllPokemonList}
         </section>
       </main>
     );

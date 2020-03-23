@@ -5,7 +5,6 @@ import Pokedex from '../../helpers/pokedex';
 function SinglePokemon(props) {
   const pokemon = props.location.state ? props.location.state.pokemon : Pokedex.pokemon;
   const creature = pokemon.find(obj => obj.num === props.id);
-  
   const types = creature.type.map((singleType, i) => {
     return(
       <li key={creature.num + 1000 + i}>{singleType}</li>  
@@ -18,7 +17,7 @@ function SinglePokemon(props) {
   });  
   const previousEvolution = creature.prev_evolution ? creature.prev_evolution.map((evolution, i) => {
     return(
-      <Link to={`/pokemon/${evolution.num}`} key={evolution.num + 1001 + i} state={{ pokemon: pokemon}}>
+      <Link to={`/pokemon/${evolution.num}`} key={evolution.num + 1001 + i} state={{ pokemon: pokemon }}>
         <li>
           <p>Previous Evolution: {evolution.name}</p>
         </li>  
