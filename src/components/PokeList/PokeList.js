@@ -58,7 +58,7 @@ class PokeList extends Component {
       return creatureName.indexOf(searchTerm.toLowerCase()) !== -1
     })
     this.setState({
-      searchedPokemon,
+      filteredAllPokemon: searchedPokemon,
     })
   }
   
